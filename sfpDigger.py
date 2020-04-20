@@ -154,7 +154,7 @@ if __name__ == "__main__":
     #First, we get the starting time, in fact, there is no effect to take this,
     #but, I like to show what time process takes,
     startingTime = time.time()
-    #Creating an instance of Aic class,
+    #Creating an instance of Apic class,
     #Simply, use ip address of sdn controller web interface, and your login credentials,
     exampleApic = Apic("ManagementIpAddressOfYourACIWebScreen", "Username", "Password")
     #After, creating instance, try to get authentication with sdn controller
