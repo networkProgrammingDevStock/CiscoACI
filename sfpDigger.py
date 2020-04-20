@@ -12,7 +12,7 @@ urllib3.disable_warnings()
 class Interface():
     def __init__(self, name):
         '''
-        This class is representetive of physical interfaces of dc switches
+        This class is representative of physical interfaces of dc switches
         '''
         self.name = name
         self.dn = ''
@@ -22,12 +22,13 @@ class Interface():
         self.sfpModel = 'unset'
         self.sfpSerial = 'unset'
         self.lastLinkStateChange = datetime.datetime(1970, 1, 1)
+        self.deployedEPGs = []
 
 
 class Device():
     def __init__(self, name):
         '''
-        This class is represantative of pyhsical switches in Pod
+        This class is representative of pyhsical switches in Pod
         '''
         self.name = name
         self.serial = ''
@@ -39,7 +40,7 @@ class Device():
 class Pod():
     def __init__(self, name):
         '''
-        This class is represantative of a group of switches combined as a data centre pod
+        This class is representative of a group of switches combined as a data centre pod
         '''
         self.name = name
         self.devices = []
@@ -48,9 +49,9 @@ class Pod():
 class Apic:
     def __init__(self, managementIP, username, password):
         '''
-        This class is represantative of Cisco Aci sdn controller,
+        This class is representative of Cisco Aci sdn controller,
         Mainly; it holds authentication process, get and post data operations, and
-        organizing obtained data with spesific functions
+        organizing obtained data with specific functions
         '''
         self.IP = managementIP
         self.username = username
@@ -126,6 +127,18 @@ class Apic:
                                 pass
                             finally:
                                 pass
+
+                        #Getting deployed EPGs on interface
+                        deployedEpgInfoOfInterface = self.getData("https://%s/api/node/mo/%s.json?rsp-subtree-include=full-deployment&target-node=all&target-path=l1EthIfToEPg" % (self.IP, tempInterface.dn))
+                        try:
+                            for item in deployedEpgInfoOfInterface:
+                                for child in item['l1PhysIf']['children'][0]['pconsCtrlrDeployCtx']['children']:
+                                    #print(child['pconsResourceCtx']['attributes']['ctxDn'])
+                                    tempInterface.deployedEPGs.append(child['pconsResourceCtx']['attributes']['ctxDn'])
+                        except:
+                            pass
+                        finally:
+                            pass
                         tempDevice.interfaces.append(tempInterface)
                         del tempInterface
                 pod.devices.append(tempDevice)
@@ -137,10 +150,6 @@ class Apic:
 
 
 
-
-
-
-
 if __name__ == "__main__":
     #First, we get the starting time, in fact, there is no effect to take this,
     #but, I like to show what time process takes,
@@ -148,11 +157,12 @@ if __name__ == "__main__":
     #Creating an instance of Aic class,
     #Simply, use ip address of sdn controller web interface, and your login credentials,
     exampleApic = Apic("ManagementIpAddressOfYourACIWebScreen", "Username", "Password")
-    #After, creating instance, try to get authenticate with sdn controller
+    #After, creating instance, try to get authentication with sdn controller
     exampleApic.login()
-    #And, let's get what we have in pysical network
+    #And, let's get what we have in physical network
     exampleApic.getFabric()
     #For showing all of what you have, you can run this part
+    """
     for pod in exampleApic.pods:
         print("Pod name is " + pod.name)
         for device in pod.devices:
@@ -160,20 +170,19 @@ if __name__ == "__main__":
             for interface in device.interfaces:
                 print("\t\t Interface id : {0} \t speed: {1} \t admin state: {2} \t operational state: {3} \t sfp serial : {4} \t dn: {5} \t lastStateChange: {6}".format(interface.name, interface.speed, \
                       interface.adminState, interface.operationalState, str(interface.sfpSerial), interface.dn, interface.lastLinkStateChange))
+    """
 
-
-    #Or you can run this part, to find sfp's on ports, staying down state more than 10 days
+    #Or you can run this part, to find sfp's on ports, staying on down state more than 10 days, and having no deployed epg
     acceptableDaysToBeSurePortIsUnused = 10
-    #For showing sfp on down ports, (Be carefull on here, maybe your port is experiencing)
     for pod in exampleApic.pods:
         print("Pod name is " + pod.name)
         for device in pod.devices:
             #print("\t Device name: %s \tmodel: %s \t serial: %s \tdn: %s" % (device.name, device.model, device.serial, device.dn))
             for interface in device.interfaces:
-                if interface.adminState != 'up' and interface.operationalState != 'up' and interface.sfpSerial and (datetime.date.today() - interface.lastLinkStateChange).days > acceptableDaysToBeSurePortIsUnused:
-                    print(interface.dn + "\t" + interface.adminState + "\t" + interface.operationalState + "\t" + interface.sfpModel + "\t" + interface.sfpSerial)
+                if interface.adminState != 'up' and interface.operationalState != 'up' and interface.sfpSerial and \
+                   (datetime.date.today() - interface.lastLinkStateChange).days > acceptableDaysToBeSurePortIsUnused and len(interface.deployedEPGs) == 0:
+                    print(interface.dn + "\t" + interface.adminState + "\t" + interface.operationalState + "\t" + interface.sfpModel + "\t" + interface.sfpSerial + '\t Deployed epg count ' + str(len(interface.deployedEPGs)))
                     print("Last Up time: " + str(interface.lastLinkStateChange) + " (1970-01-01 means that it has never been up)")
-
 
     print("Process take %s seconds to complete" % str(time.time() - startingTime))
 
