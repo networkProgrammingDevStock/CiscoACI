@@ -4,6 +4,7 @@ import datetime
 import requests
 import json
 import urllib3
+import click
 
 print("Libraries are imported")
 
@@ -150,31 +151,22 @@ class Apic:
 
 
 
-if __name__ == "__main__":
-    #First, we get the starting time, in fact, there is no effect to take this,
-    #but, I like to show what time process takes,
-    startingTime = time.time()
-    #Creating an instance of Apic class,
-    #Simply, use ip address of sdn controller web interface, and your login credentials,
-    exampleApic = Apic("ManagementIpAddressOfYourACIWebScreen", "Username", "Password")
-    #After, creating instance, try to get authentication with sdn controller
-    exampleApic.login()
-    #And, let's get what we have in physical network
-    exampleApic.getFabric()
-    #For showing all of what you have, you can run this part
-    """
-    for pod in exampleApic.pods:
-        print("Pod name is " + pod.name)
-        for device in pod.devices:
-            print("\t Device name: %s \tmodel: %s \t serial: %s \tdn: %s" % (device.name, device.model, device.serial, device.dn))
-            for interface in device.interfaces:
-                print("\t\t Interface id : {0} \t speed: {1} \t admin state: {2} \t operational state: {3} \t sfp serial : {4} \t dn: {5} \t lastStateChange: {6}".format(interface.name, interface.speed, \
-                      interface.adminState, interface.operationalState, str(interface.sfpSerial), interface.dn, interface.lastLinkStateChange))
-    """
 
-    #Or you can run this part, to find sfp's on ports, staying on down state more than 10 days, and having no deployed epg
+
+@click.group(invoke_without_command=True)
+# user input ip address
+@click.option("--ip", help="Enter ip address or url of your ACI web screen")
+# prompt user for input username
+@click.option("--username", help="username when you use to log in your Aci", prompt=True)
+# promtp user for input password
+@click.option("--password", help="password when you use to log in your Aci", prompt=True)
+@click.pass_context
+def inputParser(ctx, ip, username, password):
+    ACI_Fabric = Apic(ip, username, password)
+    ACI_Fabric.login()
+    ACI_Fabric.getFabric()
     acceptableDaysToBeSurePortIsUnused = 10
-    for pod in exampleApic.pods:
+    for pod in ACI_Fabric.pods:
         print("Pod name is " + pod.name)
         for device in pod.devices:
             #print("\t Device name: %s \tmodel: %s \t serial: %s \tdn: %s" % (device.name, device.model, device.serial, device.dn))
@@ -184,6 +176,12 @@ if __name__ == "__main__":
                     print(interface.dn + "\t" + interface.adminState + "\t" + interface.operationalState + "\t" + interface.sfpModel + "\t" + interface.sfpSerial + '\t Deployed epg count ' + str(len(interface.deployedEPGs)))
                     print("Last Up time: " + str(interface.lastLinkStateChange) + " (1970-01-01 means that it has never been up)")
 
+
+if __name__ == "__main__":
+    #First, we get the starting time, in fact, there is no effect to take this,
+    #but, I like to show what time process takes,
+    startingTime = time.time()
+    inputParser()
     print("Process take %s seconds to complete" % str(time.time() - startingTime))
 
 
