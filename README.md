@@ -36,13 +36,16 @@ Just clone this repo on your platform
 git clone https://github.com/networkProgrammingDevStock/CiscoACI.git
 
 and go to project folder
+
 cd CiscoACI
 
 Sure you can use pip to install some additional packages:
-use
+
 pip install -r requirements.txt
+
 if you are using Windows, and you add python do batch, means you can run python from command prompt,
 try this
+
 python -m pip install -r requirements.txt
 
 If you have two versions of python on your platform, please be sure what command to get in python3,
@@ -59,10 +62,13 @@ Let's say your ACI web url https://A.B.C.D/#, you will use A.B.C.D(of course, th
 If you reach your ACI web GUI with url like https://ourACIonProdorWhatever.domain.com/#, try to ping this section 'ourACIonProdorWhatever.domain.com' to get ip address of your ACI Web address. In fact, you can use 'ourACIonProdorWhatever.domain.com' as a credential though to code, but, sometimes, script can not use dns services, and I am not suggest or solve that yet,
 
 There are two modes of operation in sfpDigger, 
+
 1-  You can get all of the sfps information in your fabric in a way:
+
 - change to directory with 'cd CiscoACI'
 
 - to run sfpDigger in 'all' mode,
+
 python sfpDigger.py --ip A.B.C.D --username YourUsername --password YourPassword --mode all
 
 - after running that you will outputs like:
@@ -94,9 +100,11 @@ You have 1247 sfps in ACI located on ip A.B.C.D
 Process take 123.456 seconds to complete
 
 2-  You can get unused sfps information in your fabric, in this mode, script goes a way like if a port down for 10 days and there is no deployed epg, this port is unused, you can tune this '10' days value wtih changing 'acceptableDaysToBeSurePortIsUnused' variable value in sfpDigger.py:
+
 - change to directory with 'cd CiscoACI'
 
 - to run sfpDigger in 'unused' mode,
+
 python sfpDigger.py --ip A.B.C.D --username YourUsername --password YourPassword --mode unused
 
 - after running that you will outputs like:
