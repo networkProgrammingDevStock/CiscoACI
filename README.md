@@ -180,7 +180,9 @@ Last Up time: 1970-01-01 (1970-01-01 means that it has never been up)
 .
 .
 Result obtained from UNUSED SFP MODE:
+
 You have 11 unused sfps in ACI located on ip A.B.C.D
+
 Process take 123.456 seconds to complete
 
 
