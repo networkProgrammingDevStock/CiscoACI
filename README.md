@@ -187,6 +187,6 @@ You have 11 unused sfps in ACI located on ip A.B.C.D
 Process take 123.456 seconds to complete
 
 
-
+[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/networkProgrammingDevStock/CiscoACI)
 
    
