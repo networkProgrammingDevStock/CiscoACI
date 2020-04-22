@@ -158,30 +158,49 @@ class Apic:
 @click.option("--ip", help="Enter ip address or url of your ACI web screen")
 # prompt user for input username
 @click.option("--username", help="username when you use to log in your Aci", prompt=True)
-# promtp user for input password
+# prompt user for input password
 @click.option("--password", help="password when you use to log in your Aci", prompt=True)
+#mode of operation full means all of the sfp's, unused means unused sfps
+@click.option("--mode", help="all:\t all of the sfp in fabric\nunused: sfp's on ports staying down for 10 days and having no deployed epg", prompt=True)
 @click.pass_context
-def inputParser(ctx, ip, username, password):
-    ACI_Fabric = Apic(ip, username, password)
-    ACI_Fabric.login()
-    ACI_Fabric.getFabric()
-    acceptableDaysToBeSurePortIsUnused = 10
-    for pod in ACI_Fabric.pods:
-        print("Pod name is " + pod.name)
-        for device in pod.devices:
-            #print("\t Device name: %s \tmodel: %s \t serial: %s \tdn: %s" % (device.name, device.model, device.serial, device.dn))
-            for interface in device.interfaces:
-                if interface.adminState != 'up' and interface.operationalState != 'up' and interface.sfpSerial and \
-                   (datetime.date.today() - interface.lastLinkStateChange).days > acceptableDaysToBeSurePortIsUnused and len(interface.deployedEPGs) == 0:
-                    print(interface.dn + "\t" + interface.adminState + "\t" + interface.operationalState + "\t" + interface.sfpModel + "\t" + interface.sfpSerial + '\t Deployed epg count ' + str(len(interface.deployedEPGs)))
-                    print("Last Up time: " + str(interface.lastLinkStateChange) + " (1970-01-01 means that it has never been up)")
-
+def inputParser(ctx, ip, username, password,mode):
+    if mode == 'all' or mode == 'unused':
+        # First, we get the starting time, in fact, there is no effect to take this,
+        # but, I like to show what time process takes,
+        startingTime = time.time()
+        ACI_Fabric = Apic(ip, username, password)
+        ACI_Fabric.login()
+        ACI_Fabric.getFabric()
+        if mode == 'unused':
+            unusedSfpCounter = 0
+            acceptableDaysToBeSurePortIsUnused = 10
+            for pod in ACI_Fabric.pods:
+                print("Pod name is " + pod.name)
+                for device in pod.devices:
+                    #print("\t Device name: %s \tmodel: %s \t serial: %s \tdn: %s" % (device.name, device.model, device.serial, device.dn))
+                    for interface in device.interfaces:
+                        if interface.adminState != 'up' and interface.operationalState != 'up' and interface.sfpSerial and \
+                           (datetime.date.today() - interface.lastLinkStateChange).days > acceptableDaysToBeSurePortIsUnused and len(interface.deployedEPGs) == 0:
+                            print("Location:" + interface.dn + "\tAdmin State:" + interface.adminState + "\tOperational State:" + interface.operationalState + "\t Model:" + interface.sfpModel + "\tSN:" + interface.sfpSerial + '\t Deployed epg count ' + str(len(interface.deployedEPGs)))
+                            print("Last Up time: " + str(interface.lastLinkStateChange) + " (1970-01-01 means that it has never been up)")
+                            unusedSfpCounter += 1
+            print("Result obtained from UNUSED SFP MODE:\nYou have " + str(unusedSfpCounter) + " unused sfps in ACI located on ip " + ACI_Fabric.IP)
+        if mode == 'all':
+            sfpCount = 0
+            for pod in ACI_Fabric.pods:
+                print("Pod name is " + pod.name)
+                for device in pod.devices:
+                    #print("\t Device name: %s \tmodel: %s \t serial: %s \tdn: %s" % (device.name, device.model, device.serial, device.dn))
+                    for interface in device.interfaces:
+                        if interface.sfpSerial:
+                            print("Location:" + interface.dn + "\tAdmin State:" + interface.adminState + "\tOperational State:" + interface.operationalState + "\t Model:" + interface.sfpModel + "\tSN:" + interface.sfpSerial + '\t Deployed epg count ' + str(len(interface.deployedEPGs)))
+                            sfpCount += 1
+            print("Result obtained from ALL SFP MODE:\nYou have " + str(sfpCount) + " sfps in ACI located on ip " + ACI_Fabric.IP)
+        print("Process take %s seconds to complete" % str(time.time() - startingTime))
+    else:
+        print('Invalid operation mode is written,\nPlease use "all" or "unused" keyword after --mode')
 
 if __name__ == "__main__":
-    #First, we get the starting time, in fact, there is no effect to take this,
-    #but, I like to show what time process takes,
-    startingTime = time.time()
     inputParser()
-    print("Process take %s seconds to complete" % str(time.time() - startingTime))
 
 
