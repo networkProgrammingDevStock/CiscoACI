@@ -1,9 +1,9 @@
-Cisco ACI sfpDigger
+#Cisco ACI sfpDigger
 
 Original Author: Sadık Turgut - st.sadik.turgut@gmail.com
 
 
-Description
+##Description
 
 sfpDigger is a tool that mainly purposes giving informations about sfps and their usage in ACI Fabric,
 
@@ -19,8 +19,8 @@ https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/1-x/aci-fu
 If you have any problem to run this code, or any suggestion to develop this, you can reach me via st.sadik.turgut@gmail.com
 
 
-Installation
-Environment
+##Installation
+###Environment
 
 Required
 
@@ -30,24 +30,24 @@ Recommended:
 
     Git (to install from github)
 
-Downloading and installing
+##Downloading and installing
 Just clone this repo on your platform
-
+'''
 git clone https://github.com/networkProgrammingDevStock/CiscoACI.git
-
+'''
 and go to project folder
-
+'''
 cd CiscoACI
-
+'''
 Sure you can use pip to install some additional packages:
-
+'''
 pip install -r requirements.txt
-
+'''
 if you are using Windows, and you add python do batch, means you can run python from command prompt,
 try this
-
+'''
 python -m pip install -r requirements.txt
-
+'''
 If you have two versions of python on your platform, please be sure what command to get in python3,
 Sometimes, keyword 'python' can call python3 idle, and sometimes that can be 'python3'. If 'python3' calls
 the newer version of python, use line as below,
