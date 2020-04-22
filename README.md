@@ -74,30 +74,51 @@ python sfpDigger.py --ip A.B.C.D --username YourUsername --password YourPassword
 - after running that you will outputs like:
 
 Libraries are imported
+
 TOKEN OBTAINED FROM YOUR ACI, it is a hash 
+
 You are authenticated to Apic on  A.B.C.D
+
 Login process to Apic on A.B.C.D is finished
+
 Digging interfaces for Leaf1
+
 Digging interfaces for Leaf4
+
 Digging interfaces for Leaf3
+
 Digging interfaces for Leaf8
+
 Digging interfaces for Spine12
+
 Digging interfaces for Leaf2
+
 Digging interfaces for Leaf5
+
 Digging interfaces for Leaf7
+
 Digging interfaces for Leaf6
+
 Digging interfaces for Spine11
+
 Pod name is Pod_HowYouNamed
+
 Location:topology/pod-1/node-1/sys/phys-[eth1/48]     Admin State:down        Operational State:down   Model:MODELA SN:SERIALXXXX           Deployed epg count 0
+
 Location:topology/pod-1/node-2/sys/phys-[eth1/36]     Admin State:up        Operational State:up   Model:MODELA  SN:SERIALXXXX           Deployed epg count 17 
+
 Location:topology/pod-1/node-11/sys/phys-[eth1/37]     Admin State:down        Operational State:down   Model:MODELB  SN:SERIALXXXX           Deployed epg count 0
+
 Location:topology/pod-1/node-12/sys/phys-[eth1/38]     Admin State:up        Operational State:up   Model:MODELB SN:SERIALXXXX           Deployed epg count 0
 .
 .
 .
 Result obtained from ALL SFP MODE:
+
 You have 1247 sfps in ACI located on ip A.B.C.D
+
 Process take 123.456 seconds to complete
+
 
 2-  You can get unused sfps information in your fabric, in this mode, script goes a way like if a port down for 10 days and there is no deployed epg, this port is unused, you can tune this '10' days value wtih changing 'acceptableDaysToBeSurePortIsUnused' variable value in sfpDigger.py:
 
@@ -110,28 +131,51 @@ python sfpDigger.py --ip A.B.C.D --username YourUsername --password YourPassword
 - after running that you will outputs like:
 
 Libraries are imported
+
 TOKEN OBTAINED FROM YOUR ACI, it is a hash 
+
 You are authenticated to Apic on  A.B.C.D
+
 Login process to Apic on A.B.C.D is finished
+
 Digging interfaces for Leaf1
+
 Digging interfaces for Leaf4
+
 Digging interfaces for Leaf3
+
 Digging interfaces for Leaf8
+
 Digging interfaces for Spine12
+
 Digging interfaces for Leaf2
+
 Digging interfaces for Leaf5
+
 Digging interfaces for Leaf7
+
 Digging interfaces for Leaf6
+
 Digging interfaces for Spine11
+
 Pod name is Pod_HowYouNamed
+
 Location:topology/pod-1/node-1/sys/phys-[eth1/48]     Admin State:down        Operational State:down   Model:MODELA SN:SERIALXXXX           Deployed epg count 0
+
 Last Up time: 2020-04-11 (1970-01-01 means that it has never been up)
+
 Location:topology/pod-1/node-2/sys/phys-[eth1/36]     Admin State:down        Operational State:down   Model:MODELA  SN:SERIALXXXX           Deployed epg count 17 
+
 Last Up time: 1970-01-01 (1970-01-01 means that it has never been up)
+
 Location:topology/pod-1/node-11/sys/phys-[eth1/37]     Admin State:down        Operational State:down   Model:MODELB  SN:SERIALXXXX           Deployed epg count 0
+
 Last Up time: 2019-11-08 (1970-01-01 means that it has never been up)
+
 Location:topology/pod-1/node-12/sys/phys-[eth1/38]     Admin State:down        Operational State:down   Model:MODELB SN:SERIALXXXX           Deployed epg count 0
+
 Last Up time: 1970-01-01 (1970-01-01 means that it has never been up)
+
 .
 .
 .
